@@ -1,0 +1,17 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/authomata
+authomata.so
+authomata.dylib
+authomata.dll
+authomata.a
+authomata.lib
+authomata-test-*
+*.exe
+*.o
+*.obj
+*.lst
+.vscode
+test-*

@@ -1,0 +1,15 @@
+{
+	"authors": [
+		"Alireza |S.N|"
+	],
+	"copyright": "Copyright © 2020, Alireza |S.N|",
+	"dependencies": {
+		"gtk-d:gtkd": "~>3.9.0"
+	},
+	"libs": [
+		"oath"
+	],
+	"description": "2-Step Verification Code Generator For Linux Desktops",
+	"license": "GPL-3.0",
+	"name": "authomata"
+}

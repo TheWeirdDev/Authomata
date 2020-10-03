@@ -1,0 +1,59 @@
+module ui.timer_view;
+
+import core.stdc.time;
+
+import gtk.DrawingArea;
+import cairo.Context;
+import std.math;
+import std.algorithm;
+import std.datetime.systime;
+
+package final class TimerView : DrawingArea {
+    alias TimerCallback = void delegate();
+    this() {
+        super(25, 25);
+        addOnDraw((Scoped!Context context, Widget) {
+            const height = this.getAllocatedHeight();
+            const width = this.getAllocatedWidth();
+
+            const xc = width / 2.0;
+            const yc = height / 2.0;
+            const radius = min(width, height) / 2.0;
+            auto angle1 = -PI / 2.0;
+            auto angle2 = -PI / 2.0;
+
+            auto t = (Clock.currTime() - SysTime.fromUnixTime(0)).total!"msecs";
+            auto percentage = t % 3_0000 / 3_0000.0;
+            if (percent > percentage) {
+                tc();
+            }
+            percent = percentage;
+            if (percentage > 0) {
+                angle1 = angle2;
+                //  const ratio = cast(double) percentage / 100;
+                angle2 = percentage * 2 * PI - PI / 2.0;
+                context.moveTo(xc, yc);
+                context.setSourceRgba(1, 1, 1, 1);
+                context.arc(xc, yc, radius, angle1, angle2);
+                context.fill();
+            }
+
+            angle1 = angle2;
+            angle2 = 2 * PI - PI / 2.0;
+            context.moveTo(xc, yc);
+            context.setSourceRgba(0.4, 0.4, 1, 1);
+            context.arc(xc, yc, radius, angle1, angle2);
+            context.fill();
+            queueDraw();
+            return true;
+        });
+    }
+
+    void setTimerCallback(TimerCallback tcb) {
+        tc = tcb;
+    }
+
+private:
+    TimerCallback tc;
+    double percent;
+}
