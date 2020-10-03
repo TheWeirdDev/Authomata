@@ -20,9 +20,8 @@ public final class Window : ApplicationWindow {
     void createUI() {
         storage = new Storage();
 
-        auto header = new HeaderBar();
+        header = new HeaderBar();
         header.setShowCloseButton(true);
-        header.setTitle("4 Accounts");
 
         auto addBtn = new Button();
         auto icon = new Image;
@@ -47,6 +46,7 @@ public final class Window : ApplicationWindow {
 
             auto name_ent = new Entry();
             auto secret_ent = new Entry();
+            auto username_ent = new Entry();
 
             const void delegate(EditableIF) cb = (EditableIF) {
                 d.getWidgetForResponse(ResponseType.ACCEPT).setSensitive(name_ent.getText()
@@ -57,18 +57,23 @@ public final class Window : ApplicationWindow {
 
             auto lbl1 = new Label("The name of this account:");
             auto lbl2 = new Label("The secret code that you got:");
+            auto lbl3 = new Label("Your username (optional):");
             lbl1.setAlignment(0, 0);
             lbl2.setAlignment(0, 0);
+            lbl3.setAlignment(0, 0);
             lbl2.setMarginTop(10);
+            lbl3.setMarginTop(10);
 
             box.packStart(lbl1, false, false, 5);
             box.packStart(name_ent, false, false, 0);
             box.packStart(lbl2, false, false, 5);
             box.packStart(secret_ent, false, false, 0);
+            box.packStart(lbl3, false, false, 5);
+            box.packStart(username_ent, false, false, 0);
 
             box.setMarginStart(15);
             box.setMarginEnd(15);
-            secret_ent.setMarginBottom(15);
+            username_ent.setMarginBottom(15);
             d.getContentArea().add(box);
             d.showAll();
             const res = d.run();
@@ -80,7 +85,6 @@ public final class Window : ApplicationWindow {
                     reloadAccountList();
                 }
             };
-
             addBtn.addOnClicked(addCallback);
             header.add(addBtn);
             setTitlebar(header);
@@ -93,6 +97,10 @@ public final class Window : ApplicationWindow {
 
     private:
         void reloadAccountList() {
+            import std.conv : to;
+
+            header.setTitle(storage.countAccounts().to!string ~ " Accounts");
+
             if (auto t = contents.getChildren()) {
                 foreach (ref w; t.toArray!Widget()) {
                     contents.remove(w);
@@ -126,4 +134,5 @@ public final class Window : ApplicationWindow {
         Storage storage;
         VBox contents;
         void delegate(Button) addCallback;
+        HeaderBar header;
     }

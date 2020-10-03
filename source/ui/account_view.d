@@ -3,6 +3,7 @@ module ui.account_view;
 import gtk.HBox, gtk.VBox, gtk.ListBoxRow, gtk.ListBox, gtk.Frame;
 import gtk.Label;
 
+import auth.oath;
 import auth.account;
 import ui.timer_view;
 
@@ -40,7 +41,7 @@ package final class AccountView : Frame {
         auto tmv = new TimerView();
         import std.conv : to;
 
-        tmv.setTimerCallback({ code_lbl.setText(i++.to!string); });
+        tmv.setTimerCallback({ generateCode(); });
         hbox.packStart(tmv, false, false, 10);
 
         vbox.packStart(name_lbl, false, false, 0);
@@ -49,11 +50,28 @@ package final class AccountView : Frame {
         bgboxChild.add(vbox);
 
         bgbox.add(bgboxChild);
+        generateCode();
         add(bgbox);
     }
 
 private:
-    int i = 0;
+    void generateCode() {
+        import std.conv : to;
+
+        char[7] buff;
+        const char[] secret = account.secret;
+        char[50] b;
+        char* bb = &b[0];
+        size_t s;
+        oath_base32_decode(secret.ptr, secret.length, &bb, &s);
+
+        import core.stdc.time;
+
+        oath_totp_generate(bb, s, time(null), 30, 0, 6, buff.ptr);
+        auto code = buff.to!string;
+        code_lbl.setText(code[0 .. 3] ~ " " ~ code[3 .. $]);
+    }
+
     Account account;
     ListBox bgbox;
     ListBoxRow bgboxChild;
@@ -61,5 +79,4 @@ private:
     HBox hbox;
     Label name_lbl;
     Label code_lbl;
-    /* TimerView timer */
 }
