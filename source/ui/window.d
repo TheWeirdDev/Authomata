@@ -123,8 +123,11 @@ private:
 
             foreach (acc; storage.getAccounts())
                 vb.packStart(new AccountView(acc), false, false, 5);
+            vb.packStart(new Label("Left click on any code to copy it to the clipboard"),
+                    false, false, 5);
             s.add(vb);
             contents.packStart(s, true, true, 0);
+
         }
         contents.showAll();
     }

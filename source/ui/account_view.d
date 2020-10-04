@@ -1,11 +1,14 @@
 module ui.account_view;
 
 import gtk.HBox, gtk.VBox, gtk.ListBoxRow, gtk.ListBox, gtk.Frame;
-import gtk.Label;
+import gtk.Label, gtk.EventBox;
+
+import std.array;
 
 import auth.oath;
 import auth.account;
 import ui.timer_view;
+import gtk.Clipboard, gdk.Atom;
 
 package final class AccountView : Frame {
 
@@ -41,13 +44,22 @@ package final class AccountView : Frame {
             hbox2.packStart(user_lbl, false, false, 0);
         }
 
-        code_lbl = new Label(account.secret);
+        auto evb = new EventBox();
+        code_lbl = new Label("");
         code_lbl.getStyleContext().addClass("code-number");
         code_lbl.setAlignment(0, 0);
         code_lbl.setPadding(6, 2);
 
+        evb.add(code_lbl);
+
+        evb.addOnButtonPress((GdkEventButton*, Widget) {
+            const txt = code_lbl.getText().replace(" ", "");
+            Clipboard.get(intern("CLIPBOARD", true)).setText(txt, cast(int) txt.length);
+            return true;
+        });
+
         auto hbox = new HBox(false, 0);
-        hbox.packStart(code_lbl, true, true, 0);
+        hbox.packStart(evb, true, true, 0);
         auto tmv = new TimerView();
 
         tmv.setTimerCallback({ generateCode(); });
