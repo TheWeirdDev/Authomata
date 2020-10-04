@@ -12,7 +12,6 @@ import ui.window;
 import utils;
 
 int main(string[] args) {
-
 	Window win;
 	auto app = new Application("com.theweirddev.authomata", GApplicationFlags.FLAGS_NONE);
 	app.addOnActivate((Application) {

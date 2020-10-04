@@ -1,6 +1,9 @@
 # ⚙️ Authomata
 Two-factor authentication app for Linux
 
+![screenshot1](screenshots/scr1.png)
+![screenshot2](screenshots/scr2.png)
+
 # 🛠 Build
 Make sure you have the latest version of `LDC and Dub` and `oath-toolkit` installed on your computer. Then run:
 
