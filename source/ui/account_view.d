@@ -24,27 +24,36 @@ package final class AccountView : Frame {
         bgboxChild = new ListBoxRow();
         bgboxChild.setActivatable(false);
 
-        vbox = new VBox(false, 0);
+        auto vbox = new VBox(false, 0);
 
-        name_lbl = new Label(account.name);
+        auto name_lbl = new Label(account.name);
         name_lbl.getStyleContext().addClass("acc-name");
         name_lbl.setAlignment(0, 0);
         name_lbl.setPadding(6, 2);
+
+        auto hbox2 = new HBox(false, 0);
+        hbox2.packStart(name_lbl, false, false, 0);
+
+        if (account.username.length > 0) {
+            auto user_lbl = new Label(account.username);
+            user_lbl.getStyleContext().addClass("user-name");
+            user_lbl.setMarginTop(2);
+            hbox2.packStart(user_lbl, false, false, 0);
+        }
 
         code_lbl = new Label(account.secret);
         code_lbl.getStyleContext().addClass("code-number");
         code_lbl.setAlignment(0, 0);
         code_lbl.setPadding(6, 2);
 
-        hbox = new HBox(false, 0);
+        auto hbox = new HBox(false, 0);
         hbox.packStart(code_lbl, true, true, 0);
         auto tmv = new TimerView();
-        import std.conv : to;
 
         tmv.setTimerCallback({ generateCode(); });
         hbox.packStart(tmv, false, false, 10);
 
-        vbox.packStart(name_lbl, false, false, 0);
+        vbox.packStart(hbox2, false, false, 0);
         vbox.packStart(hbox, false, false, 0);
 
         bgboxChild.add(vbox);
@@ -75,8 +84,5 @@ private:
     Account account;
     ListBox bgbox;
     ListBoxRow bgboxChild;
-    VBox vbox;
-    HBox hbox;
-    Label name_lbl;
     Label code_lbl;
 }

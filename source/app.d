@@ -36,7 +36,10 @@ int main(string[] args) {
 			}
 			.acc-name {
 				font-weight: bold;
-				font-size: 1.2rem;
+				font-size: 1.3rem;
+			}
+			.user-name {
+				font-size: 1.0rem;
 			}
 			.title-label {
 				font: 2.2rem raleway;
