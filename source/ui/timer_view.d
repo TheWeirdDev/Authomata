@@ -49,7 +49,7 @@ package final class TimerView : DrawingArea {
         });
     }
 
-    void setTimerCallback(TimerCallback tcb) {
+    auto setTimerCallback(TimerCallback tcb) {
         tc = tcb;
     }
 

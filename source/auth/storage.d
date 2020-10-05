@@ -17,7 +17,8 @@ public final class Storage {
     }
 
     ~this() {
-        writeAccounts();
+        if (countAccounts() > 0)
+            writeAccounts();
     }
 
     auto countAccounts() {
@@ -26,37 +27,31 @@ public final class Storage {
 
     void readAccounts() {
         if (exists(configName)) {
-            try {
-                auto txt = readText(configName);
-                auto j = parseJSON(txt);
-                if (j.type() != JSONType.ARRAY) {
-                    import std.stdio : stderr;
 
-                    stderr.writeln("Malformed config file");
-                    return;
-                }
+            auto txt = readText(configName);
+            auto j = parseJSON(txt);
+            if (j.type() != JSONType.ARRAY) {
+                import std.stdio : stderr;
 
-            loop_items:
-                foreach (item; j.array) {
-                    Account acc;
+                stderr.writeln("Malformed config file");
+                return;
+            }
 
-                    static foreach (key; ["name", "secret", "username"]) {
-                        if (auto found = key in item) {
-                            mixin("acc." ~ key ~ " = found.str();");
-                        } else {
-                            continue loop_items;
-                        }
+        loop_items:
+            foreach (item; j.array) {
+                Account acc;
+
+                static foreach (key; ["name", "secret", "username"]) {
+                    if (auto found = key in item) {
+                        mixin("acc." ~ key ~ " = found.str();");
+                    } else {
+                        continue loop_items;
                     }
-                    accounts ~= acc;
                 }
-            } catch (FileException fe) {
-                stderr.writeln(fe.msg);
-                exit(1);
-            } catch (JSONException je) {
-                stderr.writeln(je.msg);
-                exit(1);
+                accounts ~= acc;
             }
         }
+
     }
 
     void writeAccounts() {
@@ -82,7 +77,7 @@ public final class Storage {
         writeAccounts();
     }
 
-    immutable(Account[]) getAccounts() const {
+    auto getAccounts() const {
         return accounts.idup;
     }
 
