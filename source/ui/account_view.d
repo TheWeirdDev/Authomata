@@ -78,17 +78,17 @@ package final class AccountView : Frame {
 private:
     void generateCode() {
         import std.conv : to;
+        import core.stdc.time : time;
 
         char[7] buff;
         const char[] secret = account.secret;
         char[50] b;
         char* bb = &b[0];
         size_t s;
+
         oath_base32_decode(secret.ptr, secret.length, &bb, &s);
-
-        import core.stdc.time;
-
         oath_totp_generate(bb, s, time(null), 30, 0, 6, buff.ptr);
+
         auto code = buff.to!string;
         code_lbl.setText(code[0 .. 3] ~ " " ~ code[3 .. $]);
     }

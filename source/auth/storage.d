@@ -19,7 +19,7 @@ public final class Storage {
         writeAccounts();
     }
 
-    size_t countAccounts() {
+    auto countAccounts() {
         return accounts.length;
     }
 
@@ -71,7 +71,7 @@ public final class Storage {
         writeAccounts();
     }
 
-    immutable(Account[]) getAccounts() {
+    immutable(Account[]) getAccounts() const {
         return accounts.idup;
     }
 

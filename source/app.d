@@ -24,7 +24,7 @@ int main(string[] args) {
 
 		auto styleProvider = new CssProvider();
 		styleProvider.loadFromData(`
-            .app-title {
+			.app-title {
 				font-weight: bold;
 				font-size: 2.5rem;
 			}
@@ -43,16 +43,16 @@ int main(string[] args) {
 			.title-label {
 				font: 2.2rem raleway;
 			}
-            .sub-label {
+			.sub-label {
 				font-size:1.2rem;
 			}
 			.button-title {
 				font-size:1.3rem;
 			}
-            .button-sub {
+			.button-sub {
 				font-size:1.1rem;
 			}
-        `);
+		`);
 		StyleContext.addProviderForScreen(Screen.getDefault(), styleProvider,
 			STYLE_PROVIDER_PRIORITY_APPLICATION);
 

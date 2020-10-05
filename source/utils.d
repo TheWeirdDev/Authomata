@@ -3,16 +3,16 @@ import std.path;
 import std.file;
 
 pragma(inline, true) {
-    static string getUserHomeDir() {
+    static auto getUserHomeDir() {
         return expandTilde("~");
     }
 
-    static string getConfigDirName() {
+    static auto getConfigDirName() {
         return getUserHomeDir() ~ "/.config/Authomata/";
     }
 }
 
-static void createConfigDirIfNotExists() {
+static auto createConfigDirIfNotExists() {
     auto cfgDir = getConfigDirName();
     if (!exists(cfgDir)) {
         mkdirRecurse(cfgDir);
