@@ -3,19 +3,14 @@ import ui.welcome_button;
 import gtk.Label, gtk.Grid, gtk.Image, gtk.Button;
 
 public final class Welcome : Grid {
-private:
-    Label title;
-    Label subTitle;
-    Grid options;
 
-public:
     this(string t, string st) {
-        title = new Label(t);
+        auto title = new Label(t);
         title.setJustify(GtkJustification.CENTER);
         title.setHexpand(true);
         title.getStyleContext().addClass("app-title");
 
-        subTitle = new Label(st);
+        auto subTitle = new Label(st);
         subTitle.setJustify(GtkJustification.CENTER);
         subTitle.setHexpand(true);
         subTitle.setLineWrap(true);
@@ -45,5 +40,8 @@ public:
 
         button.addOnClicked(onClick);
     }
+
+private:
+    Grid options;
 
 }

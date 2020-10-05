@@ -3,13 +3,14 @@ module auth.storage;
 import std.json;
 import std.file;
 import std.exception;
+import std.stdio;
+import core.stdc.stdlib : exit;
 
 import auth.account;
 import utils;
-import std.stdio;
 
 public final class Storage {
-    // TODO: try-catch
+
     this() {
         configName = getConfigDirName() ~ "/config.json";
         readAccounts();
@@ -25,26 +26,35 @@ public final class Storage {
 
     void readAccounts() {
         if (exists(configName)) {
-            auto txt = readText(configName);
-            auto j = parseJSON(txt);
-            if (j.type() != JSONType.ARRAY) {
-                import std.stdio : stderr;
+            try {
+                auto txt = readText(configName);
+                auto j = parseJSON(txt);
+                if (j.type() != JSONType.ARRAY) {
+                    import std.stdio : stderr;
 
-                stderr.writeln("Malformed config file");
-                return;
-            }
-        loop_items:
-            foreach (item; j.array) {
-                Account acc;
-
-                static foreach (key; ["name", "secret", "username"]) {
-                    if (auto found = key in item) {
-                        mixin("acc." ~ key ~ " = found.str();");
-                    } else {
-                        continue loop_items;
-                    }
+                    stderr.writeln("Malformed config file");
+                    return;
                 }
-                accounts ~= acc;
+
+            loop_items:
+                foreach (item; j.array) {
+                    Account acc;
+
+                    static foreach (key; ["name", "secret", "username"]) {
+                        if (auto found = key in item) {
+                            mixin("acc." ~ key ~ " = found.str();");
+                        } else {
+                            continue loop_items;
+                        }
+                    }
+                    accounts ~= acc;
+                }
+            } catch (FileException fe) {
+                stderr.writeln(fe.msg);
+                exit(1);
+            } catch (JSONException je) {
+                stderr.writeln(je.msg);
+                exit(1);
             }
         }
     }
@@ -62,7 +72,8 @@ public final class Storage {
             file.write(list.toString());
 
         } catch (ErrnoException ex) {
-            // Handle errors
+            stderr.writeln(ex.msg);
+            exit(1);
         }
     }
 
