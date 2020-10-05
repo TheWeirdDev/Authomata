@@ -31,15 +31,16 @@ package final class TimerView : DrawingArea {
             auto angle2 = -PI / 2.0;
 
             auto t = (Clock.currTime() - SysTime.fromUnixTime(0)).total!"msecs";
-            auto percentage = t % 3_0000 / 3_0000.0;
-            if (percent > percentage) {
+            auto percentage = t % 3_0000 / 3_00.0;
+
+            if (percentage < 1) {
                 tc();
             }
-            percent = percentage;
+
             if (percentage > 0) {
                 angle1 = angle2;
-                //  const ratio = cast(double) percentage / 100;
-                angle2 = percentage * 2 * PI - PI / 2.0;
+                const ratio = cast(double) percentage / 100;
+                angle2 = ratio * 2 * PI - PI / 2.0;
                 context.moveTo(xc, yc);
                 context.setSourceRgba(1, 1, 1, 1);
                 context.arc(xc, yc, radius, angle1, angle2);
@@ -62,5 +63,4 @@ package final class TimerView : DrawingArea {
 
 private:
     TimerCallback tc;
-    double percent;
 }
