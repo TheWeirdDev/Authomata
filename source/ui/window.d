@@ -44,7 +44,12 @@ private:
         auto d = new Dialog("Add a new account", this, GtkDialogFlags.MODAL,
                 ["Cancel", "Add"], [ResponseType.CANCEL, ResponseType.ACCEPT]);
 
-        d.getWidgetForResponse(ResponseType.ACCEPT).setSensitive(false);
+        with (d.getWidgetForResponse(ResponseType.ACCEPT)) {
+            setSensitive(false);
+            setCanDefault(true);
+            grabDefault();
+        }
+
         scope (exit)
             d.destroy();
 
@@ -58,6 +63,11 @@ private:
         auto secret_ent = new Entry();
         auto username_ent = new Entry("@");
 
+        static foreach (ent; [
+                name_ent.stringof, secret_ent.stringof, username_ent.stringof
+            ]) {
+            mixin(ent ~ ".setActivatesDefault(true);");
+        }
         const void delegate(EditableIF) cb = (EditableIF) {
             d.getWidgetForResponse(ResponseType.ACCEPT).setSensitive(name_ent.getText()
                     .length > 0 && secret_ent.getText().length > 0);
@@ -89,8 +99,9 @@ private:
         const res = d.run();
 
         if (res == ResponseType.ACCEPT) {
-            storage.addAccount(Account(name_ent.getText(),
-                    secret_ent.getText(), username_ent.getText()));
+            const user = username_ent.getText();
+            const username = user == "@" ? "" : user;
+            storage.addAccount(Account(name_ent.getText(), secret_ent.getText(), username));
             reloadAccountList();
         }
     }
@@ -123,7 +134,7 @@ private:
 
             foreach (acc; storage.getAccounts())
                 vb.packStart(new AccountView(acc), false, false, 5);
-            vb.packStart(new Label("Left click on any code to copy it to the clipboard"),
+            vb.packStart(new Label("Click on any code to copy it to the clipboard"),
                     false, false, 5);
             s.add(vb);
             contents.packStart(s, true, true, 0);
