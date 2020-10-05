@@ -84,6 +84,20 @@ private:
         lbl2.setMarginTop(10);
         lbl3.setMarginTop(10);
 
+        enum DISABLED_OP = 0.6, ENABLED_OP = 1;
+        username_ent.setOpacity(DISABLED_OP);
+        lbl3.setOpacity(DISABLED_OP);
+        username_ent.addOnChanged((EditableIF) {
+            const txt = username_ent.getText();
+            if (txt != "@" && txt.length > 0) {
+                username_ent.setOpacity(ENABLED_OP);
+                lbl3.setOpacity(ENABLED_OP);
+            } else {
+                username_ent.setOpacity(DISABLED_OP);
+                lbl3.setOpacity(DISABLED_OP);
+            }
+        });
+
         box.packStart(lbl1, false, false, 5);
         box.packStart(name_ent, false, false, 0);
         box.packStart(lbl2, false, false, 5);
