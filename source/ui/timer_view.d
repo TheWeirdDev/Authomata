@@ -2,16 +2,24 @@ module ui.timer_view;
 
 import core.stdc.time;
 
-import gtk.DrawingArea;
+import gtk.DrawingArea, gtk.Widget;
 import cairo.Context;
 import std.math;
 import std.algorithm;
 import std.datetime.systime;
 
 package final class TimerView : DrawingArea {
+
     alias TimerCallback = void delegate();
+
     this() {
         super(25, 25);
+
+        addTickCallback(cast(GtkTickCallback) function(GtkWidget*, GdkFrameClock*, Widget _widget) {
+            _widget.queueDraw();
+            return G_SOURCE_CONTINUE;
+        }, cast(void*) this, null);
+
         addOnDraw((Scoped!Context context, Widget) {
             const height = this.getAllocatedHeight();
             const width = this.getAllocatedWidth();
@@ -44,7 +52,6 @@ package final class TimerView : DrawingArea {
             context.setSourceRgba(0.4, 0.4, 1, 1);
             context.arc(xc, yc, radius, angle1, angle2);
             context.fill();
-            queueDraw();
             return true;
         });
     }

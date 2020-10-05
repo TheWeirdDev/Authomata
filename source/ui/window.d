@@ -68,7 +68,7 @@ private:
             ]) {
             mixin(ent ~ ".setActivatesDefault(true);");
         }
-        const void delegate(EditableIF) cb = (EditableIF) {
+        void delegate(EditableIF) cb = (EditableIF) {
             d.getWidgetForResponse(ResponseType.ACCEPT).setSensitive(name_ent.getText()
                     .length > 0 && secret_ent.getText().length > 0);
         };

@@ -17,8 +17,8 @@ int main(string[] args) {
 	app.addOnActivate((Application) {
 
 		win = new Window(app);
-		win.setDefaultSize(400, 550);
-		win.setSizeRequest(400, 550);
+		win.setDefaultSize(400, 600);
+		win.setSizeRequest(400, 600);
 		win.addOnDelete((Event, Widget) { app.quit(); return true; });
 		win.showAll();
 
