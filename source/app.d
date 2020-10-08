@@ -31,7 +31,7 @@ int main(string[] args) {
 			.code-number {
 				font-weight: bold;
 				font-size: 2.5rem;
-				color: lightblue;
+				color: rgb(0, 220, 220);
 			}
 			.acc-name {
 				font-weight: bold;
@@ -48,6 +48,9 @@ int main(string[] args) {
 			}
 			.button-title {
 				font-size:1.3rem;
+			}
+			.delete-btn {
+				padding: 0;
 			}
 			.button-sub {
 				font-size:1.1rem;

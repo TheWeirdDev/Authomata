@@ -4,6 +4,7 @@ import std.json;
 import std.file;
 import std.exception;
 import std.stdio;
+import std.algorithm;
 import core.stdc.stdlib : exit;
 
 import auth.account;
@@ -74,6 +75,11 @@ public final class Storage {
 
     void addAccount(Account acc) {
         accounts ~= acc;
+        writeAccounts();
+    }
+
+    void removeAccount(Account acc) {
+        accounts.remove!(a => a == acc);
         writeAccounts();
     }
 

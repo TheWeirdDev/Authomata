@@ -15,7 +15,8 @@ package final class TimerView : DrawingArea {
     this() {
         super(25, 25);
 
-        addTickCallback(cast(GtkTickCallback) function(GtkWidget*, GdkFrameClock*, Widget _widget) {
+        tickHandle = addTickCallback(cast(GtkTickCallback) function(GtkWidget*,
+                GdkFrameClock*, Widget _widget) {
             _widget.queueDraw();
             return G_SOURCE_CONTINUE;
         }, cast(void*) this, null);
@@ -50,17 +51,22 @@ package final class TimerView : DrawingArea {
             angle1 = angle2;
             angle2 = 2 * PI - PI / 2.0;
             context.moveTo(xc, yc);
-            context.setSourceRgba(0.4, 0.4, 1, 1);
+            context.setSourceRgba(0.2, 0.6, 1, 1);
             context.arc(xc, yc, radius, angle1, angle2);
             context.fill();
             return true;
         });
     }
 
-    auto setTimerCallback(TimerCallback tcb) {
+    void setTimerCallback(TimerCallback tcb) pure nothrow @nogc @safe {
         tc = tcb;
+    }
+
+    auto removeSelf() {
+        removeTickCallback(tickHandle);
     }
 
 private:
     TimerCallback tc;
+    uint tickHandle;
 }

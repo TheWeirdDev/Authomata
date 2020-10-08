@@ -5,7 +5,7 @@ import gtk.HBox, gtk.VBox, gtk.HeaderBar, gtk.Image, gio.ThemedIcon;
 import gtk.Button, gtk.Label, gtk.Frame, gtk.ListBox, gtk.ListBoxRow;
 import gtk.Entry, gtk.EditableIF, gtk.Widget;
 
-import ui.account_view;
+import ui.account_view, ui.topbar;
 import ui.welcome;
 import auth.account;
 import auth.storage;
@@ -19,19 +19,12 @@ public final class Window : ApplicationWindow {
 
     void createUI() {
         storage = new Storage();
+        topbar = new TopBar(&onAddClicked, (bool isEditing) {
+            import std.algorithm;
 
-        header = new HeaderBar();
-        header.setShowCloseButton(true);
-
-        auto addBtn = new Button();
-        auto icon = new Image;
-        icon.setFromGicon(new ThemedIcon("gtk-add"), GtkIconSize.LARGE_TOOLBAR);
-        addBtn.setImage(icon);
-
-        addBtn.addOnClicked(&onAddClicked);
-        header.add(addBtn);
-        setTitlebar(header);
-
+            accViews.each!(a => a.setEditMode(isEditing));
+        });
+        setTitlebar(topbar);
         contents = new VBox(false, 0);
         reloadAccountList();
 
@@ -123,7 +116,7 @@ private:
     void reloadAccountList() {
         import std.conv : to;
 
-        header.setTitle(storage.countAccounts().to!string ~ " Accounts");
+        // header.setTitle(storage.countAccounts().to!string ~ " Accounts");
         if (auto t = contents.getChildren()) {
             foreach (ref w; t.toArray!Widget()) {
                 contents.remove(w);
@@ -146,8 +139,11 @@ private:
             title.getStyleContext().addClass("app-title");
             vb.packStart(title, false, false, 20);
 
-            foreach (acc; storage.getAccounts())
-                vb.packStart(new AccountView(acc), false, false, 5);
+            foreach (acc; storage.getAccounts()) { // Add them to a list and remove callbacks
+                auto av = new AccountView(acc);
+                accViews ~= av;
+                vb.packStart(av, false, false, 5);
+            }
             vb.packStart(new Label("Click on any code to copy it to the clipboard"),
                     false, false, 5);
             s.add(vb);
@@ -157,7 +153,8 @@ private:
         contents.showAll();
     }
 
+    AccountView[] accViews;
     Storage storage;
     VBox contents;
-    HeaderBar header;
+    TopBar topbar;
 }

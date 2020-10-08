@@ -1,14 +1,15 @@
 module ui.account_view;
 
 import gtk.HBox, gtk.VBox, gtk.ListBoxRow, gtk.ListBox, gtk.Frame;
-import gtk.Label, gtk.EventBox;
+import gtk.Label, gtk.EventBox, gtk.Revealer, gtk.Button;
+import gtk.Clipboard, gdk.Atom, gtk.Image, gio.ThemedIcon;
 
 import std.array;
 
 import auth.oath;
-import auth.account;
+import auth.account, auth.storage;
 import ui.timer_view;
-import gtk.Clipboard, gdk.Atom;
+import auth.storage;
 
 package final class AccountView : Frame {
 
@@ -20,6 +21,10 @@ package final class AccountView : Frame {
         setShadowType(GtkShadowType.IN);
         setMarginRight(20);
         setMarginLeft(20);
+
+        editRevealer = new Revealer();
+        editRevealer.setTransitionDuration(250);
+        editRevealer.setTransitionType(GtkRevealerTransitionType.CROSSFADE);
 
         bgbox = new ListBox();
         bgbox.setSelectionMode(SelectionMode.NONE);
@@ -44,6 +49,31 @@ package final class AccountView : Frame {
             hbox2.packStart(user_lbl, false, false, 0);
         }
 
+        auto revealBox = new HBox(false, 0);
+
+        auto deleteBtn = new Button();
+        deleteBtn.getStyleContext().addClass("delete-btn");
+        deleteBtn.setMarginTop(3);
+        deleteBtn.setMarginRight(3);
+        auto icon = new Image;
+        icon.setFromGicon(new ThemedIcon("edit-delete-symbolic"), GtkIconSize.MENU);
+        deleteBtn.setImage(icon);
+
+        revealBox.packEnd(deleteBtn, false, false, 0);
+
+        auto editBtn = new Button();
+        editBtn.getStyleContext().addClass("delete-btn");
+        editBtn.setMarginTop(3);
+        editBtn.setMarginRight(3);
+        icon = new Image;
+        icon.setFromGicon(new ThemedIcon("edit-symbolic"), GtkIconSize.MENU);
+        editBtn.setImage(icon);
+
+        revealBox.packStart(editBtn, false, false, 3);
+        editRevealer.add(revealBox);
+
+        hbox2.packEnd(editRevealer, false, false, 0);
+
         auto evb = new EventBox();
         code_lbl = new Label("");
         code_lbl.getStyleContext().addClass("code-number");
@@ -60,7 +90,7 @@ package final class AccountView : Frame {
 
         auto hbox = new HBox(false, 0);
         hbox.packStart(evb, true, true, 0);
-        auto tmv = new TimerView();
+        tmv = new TimerView();
 
         tmv.setTimerCallback({ generateCode(); });
         hbox.packStart(tmv, false, false, 10);
@@ -73,6 +103,17 @@ package final class AccountView : Frame {
         bgbox.add(bgboxChild);
         generateCode();
         add(bgbox);
+    }
+
+    auto removeSelf(Storage storage) {
+        tmv.removeSelf();
+        storage.removeAccount(account);
+    }
+
+    void setEditMode(bool editMode) {
+        //  if (editMode) {
+        editRevealer.setRevealChild(editMode);
+        //   }
     }
 
 private:
@@ -94,6 +135,8 @@ private:
     }
 
     Account account;
+    Revealer editRevealer;
+    TimerView tmv;
     ListBox bgbox;
     ListBoxRow bgboxChild;
     Label code_lbl;
