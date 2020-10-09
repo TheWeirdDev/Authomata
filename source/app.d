@@ -21,44 +21,10 @@ int main(string[] args) {
 		win.setSizeRequest(400, 600);
 		win.addOnDelete((Event, Widget) { app.quit(); return true; });
 		win.showAll();
-
 		auto styleProvider = new CssProvider();
-		styleProvider.loadFromData(`
-			.app-title {
-				font-weight: bold;
-				font-size: 2.5rem;
-			}
-			.code-number {
-				font-weight: bold;
-				font-size: 2.5rem;
-				color: rgb(80, 216, 230);
-			}
-			.acc-name {
-				font-weight: bold;
-				font-size: 1.3rem;
-			}
-			.user-name {
-				font-size: 1.0rem;
-			}
-			.title-label {
-				font: 2.2rem raleway;
-			}
-			.sub-label {
-				font-size:1.2rem;
-			}
-			.button-title {
-				font-size:1.3rem;
-			}
-			.no-padding-btn {
-				padding: 0;
-			}
-			.button-sub {
-				font-size:1.1rem;
-			}
-		`);
+		styleProvider.loadFromData(utils.CSS_STYLES);
 		StyleContext.addProviderForScreen(Screen.getDefault(), styleProvider,
 			STYLE_PROVIDER_PRIORITY_APPLICATION);
-
 	});
 	createConfigDirIfNotExists();
 	return app.run(args);
