@@ -12,6 +12,10 @@ public struct Account {
     auto opEquals(R)(const R other) const {
         return other.secret == this.secret;
     }
+
+    auto clone() {
+        return Account(name, secret, username);
+    }
 }
 
 @safe unittest {

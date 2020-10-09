@@ -62,7 +62,7 @@ package final class TimerView : DrawingArea {
         tc = tcb;
     }
 
-    auto removeSelf() {
+    void removeSelf() {
         removeTickCallback(tickHandle);
     }
 

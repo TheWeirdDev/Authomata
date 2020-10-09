@@ -10,7 +10,7 @@ package final class TopBar : Stack {
         EDIT = "edit_page"
     }
 
-    this(CBType, CBEType)(CBType addCallback, CBEType editCallback) {
+    this(T1, T2)(T1 addCB, T2 editModeCB) {
         super();
 
         setTransitionType(GtkStackTransitionType.CROSSFADE);
@@ -24,7 +24,7 @@ package final class TopBar : Stack {
         icon.setFromGicon(new ThemedIcon("list-add-symbolic"), GtkIconSize.BUTTON);
         addBtn.setImage(icon);
 
-        addBtn.addOnClicked(addCallback);
+        addBtn.addOnClicked(addCB);
         header.packStart(addBtn);
 
         auto editBtn = new Button();
@@ -34,7 +34,7 @@ package final class TopBar : Stack {
 
         editBtn.addOnClicked((Button) {
             setVisibleChildName(Headers.EDIT);
-            editCallback(true);
+            editModeCB(true);
         });
         header.packEnd(editBtn);
 
@@ -48,18 +48,21 @@ package final class TopBar : Stack {
         auto icon2 = new Image;
         icon2.setFromGicon(new ThemedIcon("list-add-symbolic"), GtkIconSize.BUTTON);
         addBtn2.setImage(icon2);
-        addBtn2.addOnClicked(addCallback);
+        addBtn2.addOnClicked(addCB);
         editingHeader.packStart(addBtn2);
 
         auto doneBtn = new Button("Done");
         doneBtn.addOnClicked((Button) {
             setVisibleChildName(Headers.MAIN);
-            editCallback(false);
+            editModeCB(false);
         });
         editingHeader.packEnd(doneBtn);
 
         addNamed(editingHeader, Headers.EDIT);
+    }
 
+    void setTitle(string title) {
+        header.setTitle(title);
     }
 
 private:

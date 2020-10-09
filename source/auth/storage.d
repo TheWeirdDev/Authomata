@@ -79,7 +79,20 @@ public final class Storage {
     }
 
     void removeAccount(Account acc) {
-        accounts.remove!(a => a == acc);
+        auto ref removeElement(R, N)(ref R haystack, ref N needle) {
+            auto index = haystack.countUntil!(a => a == needle);
+            return (index != -1) ? haystack.remove(index) : haystack;
+        }
+
+        accounts = removeElement(accounts, acc);
+        writeAccounts();
+    }
+
+    void editAccount(Account oldAccount, Account newAccount) {
+        const foundIndex = accounts.countUntil!(a => a == oldAccount);
+        if (foundIndex > 0) {
+            accounts[foundIndex] = newAccount;
+        }
         writeAccounts();
     }
 

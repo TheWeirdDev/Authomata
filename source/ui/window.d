@@ -1,12 +1,11 @@
 module ui.window;
 
 import gtk.ApplicationWindow, gtk.Application, gtk.Dialog, gtk.ScrolledWindow;
-import gtk.HBox, gtk.VBox, gtk.HeaderBar, gtk.Image, gio.ThemedIcon;
+import gtk.HBox, gtk.VBox, gtk.HeaderBar, gtk.Image, gio.ThemedIcon, gtk.Widget;
 import gtk.Button, gtk.Label, gtk.Frame, gtk.ListBox, gtk.ListBoxRow;
-import gtk.Entry, gtk.EditableIF, gtk.Widget;
 
 import ui.account_view, ui.topbar;
-import ui.welcome;
+import ui.welcome, ui.editor_dialog;
 import auth.account;
 import auth.storage;
 
@@ -17,11 +16,14 @@ public final class Window : ApplicationWindow {
         createUI();
     }
 
+    import std.stdio;
+
     void createUI() {
         storage = new Storage();
         topbar = new TopBar(&onAddClicked, (bool isEditing) {
-            import std.algorithm;
+            import std.algorithm : each;
 
+            editMode = isEditing;
             accViews.each!(a => a.setEditMode(isEditing));
         });
         setTitlebar(topbar);
@@ -32,83 +34,22 @@ public final class Window : ApplicationWindow {
     }
 
 private:
+    void onAccountEdited(Account oldAcc, Account newAcc) {
+        storage.editAccount(oldAcc, newAcc);
+        reloadAccountList();
+    }
+
+    void onAccountDeleted(Account acc) {
+        storage.removeAccount(acc);
+        reloadAccountList();
+    }
 
     void onAddClicked(Button b) {
-        auto d = new Dialog("Add a new account", this, GtkDialogFlags.MODAL,
-                ["Cancel", "Add"], [ResponseType.CANCEL, ResponseType.ACCEPT]);
+        auto ed = new EditorDialog(this);
+        Account acc;
 
-        with (d.getWidgetForResponse(ResponseType.ACCEPT)) {
-            setSensitive(false);
-            setCanDefault(true);
-            grabDefault();
-        }
-
-        scope (exit)
-            d.destroy();
-
-        d.setDefaultResponse(ResponseType.ACCEPT);
-        d.setDefaultSize(400, -1);
-
-        auto box = new VBox(false, 0);
-        auto hbox = new HBox(false, 0);
-
-        auto name_ent = new Entry();
-        auto secret_ent = new Entry();
-        auto username_ent = new Entry("@");
-
-        static foreach (ent; [
-                name_ent.stringof, secret_ent.stringof, username_ent.stringof
-            ]) {
-            mixin(ent ~ ".setActivatesDefault(true);");
-        }
-        void delegate(EditableIF) cb = (EditableIF) {
-            d.getWidgetForResponse(ResponseType.ACCEPT).setSensitive(name_ent.getText()
-                    .length > 0 && secret_ent.getText().length > 0);
-        };
-        name_ent.addOnChanged(cb);
-        secret_ent.addOnChanged(cb);
-
-        auto lbl1 = new Label("The name of this account:");
-        auto lbl2 = new Label("The secret code that you got:");
-        auto lbl3 = new Label("Your username (optional):");
-        lbl1.setAlignment(0, 0);
-        lbl2.setAlignment(0, 0);
-        lbl3.setAlignment(0, 0);
-        lbl2.setMarginTop(10);
-        lbl3.setMarginTop(10);
-
-        enum DISABLED_OP = 0.6, ENABLED_OP = 1;
-        username_ent.setOpacity(DISABLED_OP);
-        lbl3.setOpacity(DISABLED_OP);
-        username_ent.addOnChanged((EditableIF) {
-            const txt = username_ent.getText();
-            if (txt != "@" && txt.length > 0) {
-                username_ent.setOpacity(ENABLED_OP);
-                lbl3.setOpacity(ENABLED_OP);
-            } else {
-                username_ent.setOpacity(DISABLED_OP);
-                lbl3.setOpacity(DISABLED_OP);
-            }
-        });
-
-        box.packStart(lbl1, false, false, 5);
-        box.packStart(name_ent, false, false, 0);
-        box.packStart(lbl2, false, false, 5);
-        box.packStart(secret_ent, false, false, 0);
-        box.packStart(lbl3, false, false, 5);
-        box.packStart(username_ent, false, false, 0);
-
-        box.setMarginStart(15);
-        box.setMarginEnd(15);
-        username_ent.setMarginBottom(15);
-        d.getContentArea().add(box);
-        d.showAll();
-        const res = d.run();
-
-        if (res == ResponseType.ACCEPT) {
-            const user = username_ent.getText();
-            const username = user == "@" ? "" : user;
-            storage.addAccount(Account(name_ent.getText(), secret_ent.getText(), username));
+        if (ed.run(acc)) {
+            storage.addAccount(acc);
             reloadAccountList();
         }
     }
@@ -116,7 +57,13 @@ private:
     void reloadAccountList() {
         import std.conv : to;
 
-        // header.setTitle(storage.countAccounts().to!string ~ " Accounts");
+        topbar.setTitle(storage.countAccounts().to!string ~ " Accounts");
+
+        foreach (ref av; accViews) {
+            av.removeSelf();
+            av.destroy();
+        }
+
         if (auto t = contents.getChildren()) {
             foreach (ref w; t.toArray!Widget()) {
                 contents.remove(w);
@@ -139,8 +86,14 @@ private:
             title.getStyleContext().addClass("app-title");
             vb.packStart(title, false, false, 20);
 
+            auto accEditCB = (Account oldAcc, Account newAcc) {
+                onAccountEdited(oldAcc, newAcc);
+            };
+            auto accDeleteCB = (Account acc) { onAccountDeleted(acc); };
+
             foreach (acc; storage.getAccounts()) { // Add them to a list and remove callbacks
-                auto av = new AccountView(acc);
+                auto av = new AccountView(acc, accEditCB, accDeleteCB);
+                av.setEditMode(editMode);
                 accViews ~= av;
                 vb.packStart(av, false, false, 5);
             }
@@ -157,4 +110,5 @@ private:
     Storage storage;
     VBox contents;
     TopBar topbar;
+    bool editMode = false;
 }

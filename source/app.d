@@ -49,7 +49,7 @@ int main(string[] args) {
 			.button-title {
 				font-size:1.3rem;
 			}
-			.delete-btn {
+			.no-padding-btn {
 				padding: 0;
 			}
 			.button-sub {

@@ -13,7 +13,7 @@ import auth.storage;
 
 package final class AccountView : Frame {
 
-    this(Account acc) {
+    this(T1, T2)(Account acc, T1 editCB, T2 deleteCB) {
         super("");
         this.account = acc;
 
@@ -52,7 +52,9 @@ package final class AccountView : Frame {
         auto revealBox = new HBox(false, 0);
 
         auto deleteBtn = new Button();
-        deleteBtn.getStyleContext().addClass("delete-btn");
+        deleteBtn.getStyleContext().addClass("no-padding-btn");
+        deleteBtn.addOnClicked((Button) { deleteCB(account); });
+
         deleteBtn.setMarginTop(3);
         deleteBtn.setMarginRight(3);
         auto icon = new Image;
@@ -62,7 +64,8 @@ package final class AccountView : Frame {
         revealBox.packEnd(deleteBtn, false, false, 0);
 
         auto editBtn = new Button();
-        editBtn.getStyleContext().addClass("delete-btn");
+        editBtn.getStyleContext().addClass("no-padding-btn");
+        //editBtn.addOnClicked((Button) { editCB(account); });
         editBtn.setMarginTop(3);
         editBtn.setMarginRight(3);
         icon = new Image;
@@ -92,7 +95,7 @@ package final class AccountView : Frame {
         hbox.packStart(evb, true, true, 0);
         tmv = new TimerView();
 
-        tmv.setTimerCallback({ generateCode(); });
+        tmv.setTimerCallback(&generateCode);
         hbox.packStart(tmv, false, false, 10);
 
         vbox.packStart(hbox2, false, false, 0);
@@ -105,15 +108,18 @@ package final class AccountView : Frame {
         add(bgbox);
     }
 
-    auto removeSelf(Storage storage) {
+    void removeSelf() {
         tmv.removeSelf();
-        storage.removeAccount(account);
     }
 
     void setEditMode(bool editMode) {
         //  if (editMode) {
         editRevealer.setRevealChild(editMode);
         //   }
+    }
+
+    auto opEquals(R)(const R other) const {
+        return other.account == this.account;
     }
 
 private:
