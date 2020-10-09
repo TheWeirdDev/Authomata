@@ -31,7 +31,7 @@ int main(string[] args) {
 			.code-number {
 				font-weight: bold;
 				font-size: 2.5rem;
-				color: rgb(0, 220, 220);
+				color: rgb(80, 216, 230);
 			}
 			.acc-name {
 				font-weight: bold;
