@@ -34,12 +34,12 @@ public final class Window : ApplicationWindow {
     }
 
 private:
-    void onAccountEdited(Account oldAcc, Account newAcc) {
+    void onAccountEdited(ref Account oldAcc, ref Account newAcc) {
         storage.editAccount(oldAcc, newAcc);
         reloadAccountList();
     }
 
-    void onAccountDeleted(Account acc) {
+    void onAccountDeleted(ref Account acc) {
         storage.removeAccount(acc);
         reloadAccountList();
     }

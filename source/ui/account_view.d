@@ -1,15 +1,14 @@
 module ui.account_view;
 
 import gtk.HBox, gtk.VBox, gtk.ListBoxRow, gtk.ListBox, gtk.Frame;
-import gtk.Label, gtk.EventBox, gtk.Revealer, gtk.Button;
+import gtk.Label, gtk.EventBox, gtk.Revealer, gtk.Button, gtk.Window;
 import gtk.Clipboard, gdk.Atom, gtk.Image, gio.ThemedIcon;
 
 import std.array;
 
 import auth.oath;
 import auth.account, auth.storage;
-import ui.timer_view;
-import auth.storage;
+import ui.timer_view, ui.editor_dialog;
 
 package final class AccountView : Frame {
 
@@ -65,7 +64,18 @@ package final class AccountView : Frame {
 
         auto editBtn = new Button();
         editBtn.getStyleContext().addClass("no-padding-btn");
-        //editBtn.addOnClicked((Button) { editCB(account); });
+        editBtn.addOnClicked((Button) {
+            auto ed = new EditorDialog(cast(Window) getToplevel());
+            Account oldAcc = account.clone();
+            ed.setAccount(oldAcc);
+
+            Account acc;
+            if (ed.run(acc)) {
+                if (oldAcc != acc) {
+                    editCB(oldAcc, acc);
+                }
+            }
+        });
         editBtn.setMarginTop(3);
         editBtn.setMarginRight(3);
         icon = new Image;
@@ -113,9 +123,7 @@ package final class AccountView : Frame {
     }
 
     void setEditMode(bool editMode) {
-        //  if (editMode) {
         editRevealer.setRevealChild(editMode);
-        //   }
     }
 
     auto opEquals(R)(const R other) const {

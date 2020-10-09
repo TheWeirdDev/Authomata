@@ -73,12 +73,12 @@ public final class Storage {
         }
     }
 
-    void addAccount(Account acc) {
+    void addAccount(ref Account acc) {
         accounts ~= acc;
         writeAccounts();
     }
 
-    void removeAccount(Account acc) {
+    void removeAccount(ref Account acc) {
         auto ref removeElement(R, N)(ref R haystack, ref N needle) {
             auto index = haystack.countUntil!(a => a == needle);
             return (index != -1) ? haystack.remove(index) : haystack;
@@ -88,9 +88,9 @@ public final class Storage {
         writeAccounts();
     }
 
-    void editAccount(Account oldAccount, Account newAccount) {
+    void editAccount(ref Account oldAccount, ref Account newAccount) {
         const foundIndex = accounts.countUntil!(a => a == oldAccount);
-        if (foundIndex > 0) {
+        if (foundIndex > -1) {
             accounts[foundIndex] = newAccount;
         }
         writeAccounts();

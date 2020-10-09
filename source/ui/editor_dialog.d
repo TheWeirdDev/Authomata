@@ -5,6 +5,8 @@ import gtk.HBox, gtk.VBox, gtk.Window;
 
 import auth.account;
 
+private enum DEFAULT_USERNAME = "@";
+
 package final class EditorDialog : Dialog {
 
     this(Window parent) {
@@ -26,7 +28,7 @@ package final class EditorDialog : Dialog {
 
         name_ent = new Entry();
         secret_ent = new Entry();
-        username_ent = new Entry("@");
+        username_ent = new Entry(DEFAULT_USERNAME);
 
         static foreach (ent; [
                 name_ent.stringof, secret_ent.stringof, username_ent.stringof
@@ -76,6 +78,12 @@ package final class EditorDialog : Dialog {
         getContentArea().add(box);
     }
 
+    void setAccount(ref Account acc) {
+        name_ent.setText(acc.name);
+        secret_ent.setText(acc.secret);
+        username_ent.setText(acc.username);
+    }
+
     bool run(out Account acc) {
         showAll();
         const res = super.run();
@@ -83,7 +91,7 @@ package final class EditorDialog : Dialog {
 
         if (res == ResponseType.ACCEPT) {
             const user = username_ent.getText();
-            const username = user == "@" ? "" : user;
+            const username = user == DEFAULT_USERNAME ? "" : user;
             acc = Account(name_ent.getText(), secret_ent.getText(), username);
             return true;
         }
