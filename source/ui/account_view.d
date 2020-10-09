@@ -35,6 +35,7 @@ package final class AccountView : Frame {
 
         auto name_lbl = new Label(account.name);
         name_lbl.getStyleContext().addClass("acc-name");
+        name_lbl.setEllipsize(PangoEllipsizeMode.END);
         name_lbl.setAlignment(0, 0);
         name_lbl.setPadding(6, 2);
 
@@ -44,6 +45,7 @@ package final class AccountView : Frame {
         if (account.username.length > 0) {
             auto user_lbl = new Label(account.username);
             user_lbl.getStyleContext().addClass("user-name");
+            user_lbl.setEllipsize(PangoEllipsizeMode.END);
             user_lbl.setMarginTop(2);
             hbox2.packStart(user_lbl, false, false, 0);
         }
