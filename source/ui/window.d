@@ -84,13 +84,8 @@ private:
             title.getStyleContext().addClass("app-title");
             vb.packStart(title, false, false, 20);
 
-            auto accEditCB = (Account oldAcc, Account newAcc) {
-                onAccountEdited(oldAcc, newAcc);
-            };
-            auto accDeleteCB = (Account acc) { onAccountDeleted(acc); };
-
             foreach (ref acc; storage.getAccounts()) {
-                auto av = new AccountView(acc, accEditCB, accDeleteCB);
+                auto av = new AccountView(acc, &onAccountEdited, &onAccountDeleted);
                 av.setEditMode(editMode);
                 accViews ~= av;
                 vb.packStart(av, false, false, 5);
