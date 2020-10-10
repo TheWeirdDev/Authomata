@@ -62,6 +62,7 @@ private:
             av.removeSelf();
             av.destroy();
         }
+        accViews.length = 0;
 
         if (auto t = contents.getChildren()) {
             foreach (ref w; t.toArray!Widget()) {
@@ -88,7 +89,7 @@ private:
             };
             auto accDeleteCB = (Account acc) { onAccountDeleted(acc); };
 
-            foreach (acc; storage.getAccounts()) {
+            foreach (ref acc; storage.getAccounts()) {
                 auto av = new AccountView(acc, accEditCB, accDeleteCB);
                 av.setEditMode(editMode);
                 accViews ~= av;

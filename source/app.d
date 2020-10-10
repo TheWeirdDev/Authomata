@@ -15,7 +15,6 @@ int main(string[] args) {
 	Window win;
 	auto app = new Application("com.theweirddev.authomata", GApplicationFlags.FLAGS_NONE);
 	app.addOnActivate((Application) {
-
 		win = new Window(app);
 		win.setDefaultSize(400, 600);
 		win.setSizeRequest(400, 600);
