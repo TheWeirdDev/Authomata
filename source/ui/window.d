@@ -16,8 +16,6 @@ public final class Window : ApplicationWindow {
         createUI();
     }
 
-    import std.stdio;
-
     void createUI() {
         storage = new Storage();
         topbar = new TopBar(&onAddClicked, (bool isEditing) {
@@ -91,7 +89,7 @@ private:
             };
             auto accDeleteCB = (Account acc) { onAccountDeleted(acc); };
 
-            foreach (acc; storage.getAccounts()) { // Add them to a list and remove callbacks
+            foreach (acc; storage.getAccounts()) {
                 auto av = new AccountView(acc, accEditCB, accDeleteCB);
                 av.setEditMode(editMode);
                 accViews ~= av;

@@ -24,7 +24,6 @@ package final class EditorDialog : Dialog {
         setDefaultSize(400, -1);
 
         auto box = new VBox(false, 0);
-        auto hbox = new HBox(false, 0);
 
         name_ent = new Entry();
         secret_ent = new Entry();
