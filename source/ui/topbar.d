@@ -14,7 +14,7 @@ package final class TopBar : Stack {
         super();
 
         setTransitionType(GtkStackTransitionType.CROSSFADE);
-        setTransitionDuration(200);
+        setTransitionDuration(250);
 
         header = new HeaderBar();
         header.setShowCloseButton(true);
