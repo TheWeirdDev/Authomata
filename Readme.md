@@ -5,7 +5,7 @@ Two-factor authentication app for Linux
 ![screenshot2](screenshots/scr2.png)
 
 # 🛠 Build
-Make sure you have the latest version of `LDC and Dub` and `oath-toolkit` installed on your computer. Then run:
+Make sure you have the latest version of `LDC and Dub` and `oath-toolkit` (`liboath-dev` for ubuntu) installed on your computer. Then run:
 
 ```bash
 dub run --compiler=ldc --build=release
