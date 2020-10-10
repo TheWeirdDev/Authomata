@@ -1,13 +1,14 @@
 module ui.window;
 
 import gtk.ApplicationWindow, gtk.Application, gtk.Dialog, gtk.ScrolledWindow;
-import gtk.HBox, gtk.VBox, gtk.HeaderBar, gtk.Image, gio.ThemedIcon, gtk.Widget;
+import gtk.HBox, gtk.VBox, gtk.HeaderBar, gtk.Widget;
 import gtk.Button, gtk.Label, gtk.Frame, gtk.ListBox, gtk.ListBoxRow;
 
 import ui.account_view, ui.topbar;
 import ui.welcome, ui.editor_dialog;
 import auth.account;
 import auth.storage;
+import utils;
 
 public final class Window : ApplicationWindow {
 
@@ -71,10 +72,8 @@ private:
         if (storage.countAccounts() == 0) {
             auto welcome = new Welcome("Authomata",
                     "You currently don't have any accounts. Use the button below to add the first one");
-            auto ic = new Image();
-            ic.setFromIconName("gtk-add", GtkIconSize.LARGE_TOOLBAR);
-            welcome.addButton("Add an account",
-                    "Add a new 2-factor authentication account", ic, &onAddClicked);
+            welcome.addButton("Add an account", "Add a new 2-factor authentication account",
+                    getImageForIcon("gtk-add", GtkIconSize.LARGE_TOOLBAR), &onAddClicked);
             contents.packStart(welcome, true, true, 0);
         } else {
             auto s = new ScrolledWindow();

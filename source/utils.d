@@ -2,12 +2,14 @@ module utils;
 import std.path;
 import std.file;
 
-pragma(inline, true) {
-    static auto getUserHomeDir() {
+import gtk.Image;
+
+pragma(inline, true) static {
+    auto getUserHomeDir() {
         return expandTilde("~");
     }
 
-    static auto getConfigDirName() {
+    auto getConfigDirName() {
         return getUserHomeDir() ~ "/.config/Authomata/";
     }
 }
@@ -20,6 +22,12 @@ static auto createConfigDirIfNotExists() {
         remove(cfgDir);
         mkdirRecurse(cfgDir);
     }
+}
+
+static auto getImageForIcon(string name, GtkIconSize size) {
+    auto icon = new Image();
+    icon.setFromIconName(name, size);
+    return icon;
 }
 
 public enum CSS_STYLES = `

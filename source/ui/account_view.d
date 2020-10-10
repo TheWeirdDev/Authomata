@@ -2,13 +2,14 @@ module ui.account_view;
 
 import gtk.HBox, gtk.VBox, gtk.ListBoxRow, gtk.ListBox, gtk.Frame;
 import gtk.Label, gtk.EventBox, gtk.Revealer, gtk.Button, gtk.Window;
-import gtk.Clipboard, gdk.Atom, gtk.Image, gio.ThemedIcon;
+import gtk.Clipboard, gdk.Atom;
 
 import std.array;
 
 import auth.oath;
 import auth.account, auth.storage;
 import ui.timer_view, ui.editor_dialog;
+import utils;
 
 package final class AccountView : Frame {
 
@@ -55,13 +56,9 @@ package final class AccountView : Frame {
         auto deleteBtn = new Button();
         deleteBtn.getStyleContext().addClass("no-padding-btn");
         deleteBtn.addOnClicked((Button) { deleteCB(account); });
-
         deleteBtn.setMarginTop(3);
         deleteBtn.setMarginRight(3);
-        auto icon = new Image;
-        icon.setFromGicon(new ThemedIcon("edit-delete-symbolic"), GtkIconSize.MENU);
-        deleteBtn.setImage(icon);
-
+        deleteBtn.setImage(getImageForIcon("edit-delete-symbolic", GtkIconSize.MENU));
         revealBox.packEnd(deleteBtn, false, false, 0);
 
         auto editBtn = new Button();
@@ -80,9 +77,7 @@ package final class AccountView : Frame {
         });
         editBtn.setMarginTop(3);
         editBtn.setMarginRight(3);
-        icon = new Image;
-        icon.setFromGicon(new ThemedIcon("edit-symbolic"), GtkIconSize.MENU);
-        editBtn.setImage(icon);
+        editBtn.setImage(getImageForIcon("edit-symbolic", GtkIconSize.MENU));
 
         revealBox.packStart(editBtn, false, false, 3);
         editRevealer.add(revealBox);

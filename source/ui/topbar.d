@@ -1,8 +1,10 @@
 module ui.topbar;
 
 import gtk.Stack, gtk.HeaderBar, gtk.Button, gtk.ToggleButton;
-import gtk.Image, gio.ThemedIcon;
+import gtk.Label;
+
 import ui.window;
+import utils;
 
 package final class TopBar : Stack {
     private enum Headers : string {
@@ -20,17 +22,13 @@ package final class TopBar : Stack {
         header.setShowCloseButton(true);
 
         auto addBtn = new Button();
-        auto icon = new Image;
-        icon.setFromGicon(new ThemedIcon("list-add-symbolic"), GtkIconSize.BUTTON);
-        addBtn.setImage(icon);
+        addBtn.setImage(getImageForIcon("list-add-symbolic", GtkIconSize.BUTTON));
 
         addBtn.addOnClicked(addCB);
         header.packStart(addBtn);
 
         auto editBtn = new Button();
-        auto iconx = new Image;
-        iconx.setFromGicon(new ThemedIcon("edit-symbolic"), GtkIconSize.BUTTON);
-        editBtn.setImage(iconx);
+        editBtn.setImage(getImageForIcon("edit-symbolic", GtkIconSize.BUTTON));
 
         editBtn.addOnClicked((Button) {
             setVisibleChildName(Headers.EDIT);
@@ -43,11 +41,10 @@ package final class TopBar : Stack {
         editingHeader = new HeaderBar();
         editingHeader.setShowCloseButton(false);
         editingHeader.getStyleContext().addClass("selection-mode");
+        editingHeader.setCustomTitle(new Label("Edit/Delete Accounts"));
 
         auto addBtn2 = new Button();
-        auto icon2 = new Image;
-        icon2.setFromGicon(new ThemedIcon("list-add-symbolic"), GtkIconSize.BUTTON);
-        addBtn2.setImage(icon2);
+        addBtn2.setImage(getImageForIcon("list-add-symbolic", GtkIconSize.BUTTON));
         addBtn2.addOnClicked(addCB);
         editingHeader.packStart(addBtn2);
 
